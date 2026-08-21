@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, Crown } from 'lucide-react';
 import { useStore } from '../../store/useStore';
+import { DEFAULT_HOMEPAGE_BANNERS } from '../../data/initialData';
 
 interface HeroBannerProps {
   onNavigateShop: (category?: any) => void;
@@ -9,25 +10,26 @@ interface HeroBannerProps {
 
 export const HeroBanner: React.FC<HeroBannerProps> = ({ onNavigateShop }) => {
   const { homepageBanners } = useStore();
+  const activeBanners = homepageBanners.length > 0 ? homepageBanners : DEFAULT_HOMEPAGE_BANNERS;
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Auto slide every 7 seconds
   useEffect(() => {
-    if (homepageBanners.length <= 1) return;
+    if (activeBanners.length <= 1) return;
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % homepageBanners.length);
+      setCurrentIndex((prev) => (prev + 1) % activeBanners.length);
     }, 7000);
     return () => clearInterval(interval);
-  }, [homepageBanners]);
+  }, [activeBanners]);
 
-  const currentBanner = homepageBanners[currentIndex] || homepageBanners[0];
+  const currentBanner = activeBanners[currentIndex] || activeBanners[0];
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % homepageBanners.length);
+    setCurrentIndex((prev) => (prev + 1) % activeBanners.length);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + homepageBanners.length) % homepageBanners.length);
+    setCurrentIndex((prev) => (prev - 1 + activeBanners.length) % activeBanners.length);
   };
 
   // 3D Parallax Tilt Effect setup
@@ -57,7 +59,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onNavigateShop }) => {
     y.set(0);
   };
 
-  if (homepageBanners.length === 0) return null;
+  if (activeBanners.length === 0) return null;
 
   return (
     <section 
@@ -147,12 +149,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onNavigateShop }) => {
       </div>
 
       {/* Interactive Slider Indicators & Manual Controls */}
-      {homepageBanners.length > 1 && (
+      {activeBanners.length > 1 && (
         <div className="absolute bottom-8 left-0 right-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between z-20">
           
           {/* Dot Indicators */}
           <div className="flex items-center gap-3">
-            {homepageBanners.map((_, idx) => (
+            {activeBanners.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}

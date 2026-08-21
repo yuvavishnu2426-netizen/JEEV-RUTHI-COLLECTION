@@ -15,7 +15,7 @@ import {
   CustomerNotification,
   ColorVariant,
 } from '../types';
-import { INITIAL_PRODUCTS } from '../data/initialData';
+import { INITIAL_PRODUCTS, DEFAULT_HOMEPAGE_BANNERS, DEFAULT_CATEGORY_BANNERS } from '../data/initialData';
 
 interface ShopFilters {
   category: CategoryType | '';
@@ -150,8 +150,8 @@ export const useStore = create<StoreState>()(
       products: INITIAL_PRODUCTS,
       colorVariants: [],
 
-      homepageBanners: [],
-      categoryBanners: [],
+      homepageBanners: DEFAULT_HOMEPAGE_BANNERS,
+      categoryBanners: DEFAULT_CATEGORY_BANNERS,
       offerConfig: DEFAULT_OFFER_CONFIG,
 
       cart: [],

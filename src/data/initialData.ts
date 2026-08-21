@@ -309,3 +309,54 @@ export const CUSTOMER_REVIEWS: Review[] = [
     userImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop',
   },
 ];
+
+export const DEFAULT_HOMEPAGE_BANNERS = [
+  {
+    id: 'hb-1',
+    image_url: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1600&auto=format&fit=crop',
+    title: 'HERITAGE KANCHIPURAM SILK',
+    subtitle: 'Woven with Pure 24K Gold Zari — Royalty Transcended Through Generations',
+    cta_text: 'EXPLORE REPERTOIRE',
+    cta_link: '/shop',
+    display_order: 1,
+    is_active: true,
+  },
+  {
+    id: 'hb-2',
+    image_url: 'https://images.unsplash.com/photo-1583391733958-6115915d31d4?q=80&w=1600&auto=format&fit=crop',
+    title: 'EXCLUSIVE DESIGNER KURTIS',
+    subtitle: 'Opulent Handcrafted Embellishments & Micro-Velvet Tailoring',
+    cta_text: 'DISCOVER COLLECTION',
+    cta_link: '/shop',
+    display_order: 2,
+    is_active: true,
+  },
+  {
+    id: 'hb-3',
+    image_url: 'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1600&auto=format&fit=crop',
+    title: 'ELITE KIDS CELEBRATION WEAR',
+    subtitle: 'Designer Party Dresses & Royal Sets for Little Princes & Princesses',
+    cta_text: 'SHOP KIDS GALA',
+    cta_link: '/shop',
+    display_order: 3,
+    is_active: true,
+  },
+];
+
+export const DEFAULT_CATEGORY_BANNERS = [
+  {
+    id: 'cb-1',
+    category: 'Women',
+    image_url: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1600&auto=format&fit=crop',
+    title: 'LUXURY WOMEN COUTURE',
+    description: 'High-end Sarees, Designer Kurtis, Silk Salwar Sets & Party Gowns',
+  },
+  {
+    id: 'cb-2',
+    category: 'Kids',
+    image_url: 'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1600&auto=format&fit=crop',
+    title: 'ROYAL KIDS COLLECTION',
+    description: 'Brocade Sherwanis, Layered Tulle Gowns & Festive Sets',
+  },
+];
+

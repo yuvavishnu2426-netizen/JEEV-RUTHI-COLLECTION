@@ -78,6 +78,11 @@ export function App() {
 
   // ── Supabase Auth Listener & Bootstrap ──────────────────────────
   useEffect(() => {
+    // Safety timer: guarantee splash screen closes in max 2 seconds even if network is slow
+    const splashTimer = setTimeout(() => {
+      setIsAppLoading(false);
+    }, 2000);
+
     // Load public product catalog & banners immediately (no auth required)
     loadPublicData();
 
