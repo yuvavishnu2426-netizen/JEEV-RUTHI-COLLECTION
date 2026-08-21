@@ -82,50 +82,63 @@ export function App() {
     loadPublicData();
 
     // Listen to auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
+    try {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          setSession(session);
 
-        if (session?.user) {
-          // Load user profile
-          const profile = await getUserProfile(session.user.id);
-          
-          setUser({
-            id: session.user.id,
-            name: profile?.full_name || session.user.email?.split('@')[0] || 'Customer',
-            email: profile?.email || session.user.email || '',
-            mobile: profile?.mobile || session.user.phone || '',
-            isVerified: profile?.is_verified ?? true,
-            authType: profile?.auth_type || 'otp-mobile',
-            savedAddresses: [],
-          });
+          if (session?.user) {
+            // Load user profile
+            const profile = await getUserProfile(session.user.id);
+            
+            setUser({
+              id: session.user.id,
+              name: profile?.full_name || session.user.email?.split('@')[0] || 'Customer',
+              email: profile?.email || session.user.email || '',
+              mobile: profile?.mobile || session.user.phone || '',
+              isVerified: profile?.is_verified ?? true,
+              authType: profile?.auth_type || 'otp-mobile',
+              savedAddresses: [],
+            });
 
-          // Check admin status (for data loading)
-          const isAdmin = await checkIsAdmin();
-          
-          // Load user-specific data
-          await loadUserData(session.user.id, isAdmin);
-        } else if (event === 'SIGNED_OUT') {
-          logoutUser();
+            // Check admin status (for data loading)
+            const isAdmin = await checkIsAdmin();
+            
+            // Load user-specific data
+            await loadUserData(session.user.id, isAdmin);
+          } else if (event === 'SIGNED_OUT') {
+            logoutUser();
+          }
         }
-      }
-    );
+      );
 
-    return () => subscription.unsubscribe();
+      return () => subscription?.unsubscribe();
+    } catch (err) {
+      console.warn('Supabase auth listener initialization skipped/errored:', err);
+    }
   }, []);
 
   // ── Load notification realtime subscription when user logs in ───
   useEffect(() => {
     if (!user?.id) return;
 
-    const channel = subscribeToUserNotifications(user.id, (payload) => {
-      if (payload.new) {
-        addCustomerNotification(payload.new as any);
-      }
-    });
+    let channel: any = null;
+    try {
+      channel = subscribeToUserNotifications(user.id, (payload) => {
+        if (payload.new) {
+          addCustomerNotification(payload.new as any);
+        }
+      });
+    } catch (err) {
+      console.warn('Realtime notifications subscription skipped/errored:', err);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch (_) {}
+      }
     };
   }, [user?.id]);
 
@@ -174,8 +187,12 @@ export function App() {
         is_active: p.is_active,
       }));
 
-      setProducts(mappedProducts);
-      setColorVariants(colorVariants);
+      if (mappedProducts && mappedProducts.length > 0) {
+        setProducts(mappedProducts);
+      }
+      if (colorVariants && colorVariants.length > 0) {
+        setColorVariants(colorVariants);
+      }
 
       // Sync local cart items with fresh mapped products to update prices/shipping fees
       const currentCart = useStore.getState().cart;
@@ -190,24 +207,28 @@ export function App() {
         useStore.setState({ cart: updatedCart });
       }
 
-      setHomepageBanners(banners.map((b: any) => ({
-        id: b.id,
-        image_url: b.image_url,
-        title: b.title,
-        subtitle: b.subtitle,
-        cta_text: b.cta_text,
-        cta_link: b.cta_link,
-        display_order: b.display_order,
-        is_active: b.is_active,
-      })));
+      if (banners && banners.length > 0) {
+        setHomepageBanners(banners.map((b: any) => ({
+          id: b.id,
+          image_url: b.image_url,
+          title: b.title,
+          subtitle: b.subtitle,
+          cta_text: b.cta_text,
+          cta_link: b.cta_link,
+          display_order: b.display_order,
+          is_active: b.is_active,
+        })));
+      }
 
-      setCategoryBanners(catBanners.map((b: any) => ({
-        id: b.id,
-        category: b.category,
-        image_url: b.image_url,
-        title: b.title,
-        description: b.description,
-      })));
+      if (catBanners && catBanners.length > 0) {
+        setCategoryBanners(catBanners.map((b: any) => ({
+          id: b.id,
+          category: b.category,
+          image_url: b.image_url,
+          title: b.title,
+          description: b.description,
+        })));
+      }
 
       if (offerCfg) {
         setOfferConfig({
