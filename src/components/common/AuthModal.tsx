@@ -199,20 +199,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md font-sans">
+      <div 
+        onClick={onClose}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md font-sans cursor-pointer"
+      >
         <motion.div
+          onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ duration: 0.3 }}
-          className="relative w-full max-w-md bg-white text-[#111] rounded-3xl shadow-2xl border border-amber-500/20 overflow-hidden"
+          className="relative w-full max-w-md bg-white text-[#111] rounded-3xl shadow-2xl border border-amber-500/20 overflow-hidden cursor-default"
         >
           {/* Header */}
           <div className="bg-[#111111] text-[#D4AF37] p-8 text-center relative border-b border-[#222]">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white transition p-2 rounded-full"
+              className="absolute top-4 right-4 text-gray-400 hover:text-white transition p-2 rounded-full cursor-pointer z-30 bg-white/5 hover:bg-white/10"
               aria-label="Close"
+              type="button"
             >
               <X className="w-5 h-5" />
             </button>
@@ -443,7 +448,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   <CheckCircle className="w-8 h-8" />
                 </div>
                 <h3 className="font-cinzel text-lg font-bold text-[#111]">WELCOME BACK</h3>
-                <p className="text-xs text-gray-500 mt-2">Successfully authenticated. Redirecting...</p>
+                <p className="text-xs text-gray-500 mt-2">Successfully authenticated. Welcome to JEEV RUTHI COLLECTION!</p>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="mt-6 w-full bg-[#111111] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-white transition duration-300 py-3.5 rounded-xl font-cinzel font-bold text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>ENTER STORE & SHOP</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </motion.div>
             )}
 
