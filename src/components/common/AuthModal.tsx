@@ -210,18 +210,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <AnimatePresence>
-      <div 
-        onClick={handleCloseModal}
-        className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md font-sans cursor-pointer select-none"
-      >
-        <motion.div
-          onClick={(e) => e.stopPropagation()}
-          initial={{ opacity: 0, scale: 0.95, y: 15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          transition={{ duration: 0.3 }}
-          className="relative w-full max-w-md bg-white text-[#111] rounded-3xl shadow-2xl border border-amber-500/30 overflow-hidden cursor-default"
+      {isOpen && (
+        <div 
+          onClick={handleCloseModal}
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md font-sans cursor-pointer select-none"
         >
+          <motion.div
+            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 15 }}
+            transition={{ duration: 0.3 }}
+            className="relative w-full max-w-md bg-white text-[#111] rounded-3xl shadow-2xl border border-amber-500/30 overflow-hidden cursor-default"
+          >
           {/* Header */}
           <div className="bg-[#111111] text-[#D4AF37] p-8 text-center relative border-b border-[#222]">
             <button
@@ -490,6 +491,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
         </motion.div>
       </div>
+      )}
     </AnimatePresence>
   );
 };
