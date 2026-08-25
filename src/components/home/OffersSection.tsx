@@ -119,17 +119,17 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onSelectProduct, o
             onMouseLeave={handleMouseLeave}
             style={{ rotateX, rotateY, scale, transformStyle: "preserve-3d" }}
           >
-            <div className="grid w-full h-auto" style={{ transform: "translateZ(30px)" }}>
+            <div className="grid w-full aspect-[16/9] overflow-hidden" style={{ transform: "translateZ(30px)" }}>
               <AnimatePresence>
                 <motion.img 
                   key={currentSlide}
-                  initial={{ opacity: 0, scale: 1.02 }}
+                  initial={{ opacity: 0, scale: 1.05 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 1.2 }}
                   src={slideImages[currentSlide]} 
                   alt={offerConfig.title} 
-                  className="col-start-1 row-start-1 w-full h-auto object-contain block transition duration-1000 group-hover:scale-[1.02]"
+                  className="col-start-1 row-start-1 w-full h-full object-cover object-top md:object-center block transition duration-1000 group-hover:scale-[1.03]"
                 />
               </AnimatePresence>
             </div>
