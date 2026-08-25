@@ -78,41 +78,57 @@ export async function sendFast2SMSOTP(phoneInput: string): Promise<{
   }
 
   try {
-    const response = await fetch(FAST2SMS_URL, {
-      method: 'POST',
-      headers: {
-        'authorization': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        route: 'otp',
-        variables_values: otpCode,
-        numbers: cleanPhone,
-      }),
-    });
+    const messageText = `Your JEEV RUTHI COLLECTION security OTP is ${otpCode}. Valid for 5 minutes. Do not share it with anyone.`;
+    
+    // Fast2SMS API expects application/x-www-form-urlencoded
+    const formData = new URLSearchParams();
+    formData.append('route', 'q');
+    formData.append('message', messageText);
+    formData.append('flash', '0');
+    formData.append('numbers', cleanPhone);
 
-    const data: Fast2SMSResponse = await response.json();
+    let data: any = null;
 
-    if (data.return) {
+    try {
+      const response = await fetch(FAST2SMS_URL, {
+        method: 'POST',
+        headers: {
+          'authorization': apiKey,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString(),
+      });
+      data = await response.json();
+    } catch (fetchErr) {
+      // If browser CORS blocks POST, fallback to GET endpoint
+      const getUrl = `${FAST2SMS_URL}?authorization=${encodeURIComponent(apiKey)}&route=q&message=${encodeURIComponent(messageText)}&flash=0&numbers=${cleanPhone}`;
+      const getRes = await fetch(getUrl, { method: 'GET' });
+      data = await getRes.json();
+    }
+
+    if (data && data.return) {
+      console.log(`[Fast2SMS] Real SMS sent successfully to +91${cleanPhone}. Request ID:`, data.request_id);
       return { success: true, error: null };
     } else {
-      const errMsg = Array.isArray(data.message) ? data.message.join(', ') : data.message || 'Fast2SMS Gateway Error';
-      console.warn('Fast2SMS gateway returned error:', errMsg);
-      // Fallback to demo mode so user login is not blocked if SMS quota runs out
+      const rawMsg = Array.isArray(data?.message) ? data.message.join(', ') : data?.message || 'Gateway Error';
+      console.warn('[Fast2SMS] Gateway warning:', data);
+
       return {
         success: true,
         error: null,
         demoOtp: otpCode,
         isDemoMode: true,
+        apiNotice: rawMsg,
       };
     }
   } catch (err: any) {
-    console.error('Fast2SMS API network call failed:', err);
+    console.error('[Fast2SMS] API call failed:', err);
     return {
       success: true,
       error: null,
       demoOtp: otpCode,
       isDemoMode: true,
+      apiNotice: 'Browser CORS network error. Demo mode active.',
     };
   }
 }
