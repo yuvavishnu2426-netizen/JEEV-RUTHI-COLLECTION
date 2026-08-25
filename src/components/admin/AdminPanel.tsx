@@ -911,11 +911,44 @@ export const AdminPanel: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-300 uppercase mb-2">High-Res Unsplash Banner Image URL *</label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-bold text-gray-300 uppercase">Banner Image *</label>
+                  <label className="bg-[#D4AF37] hover:bg-white text-black transition px-3 py-1.5 rounded-lg text-xs font-bold uppercase cursor-pointer flex items-center gap-1.5">
+                    <UploadCloud className="w-3.5 h-3.5" />
+                    <span>Upload Photo from Device</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        try {
+                          const { url, error } = await uploadBannerImage(file);
+                          if (url && !error) {
+                            setBannerImg(url);
+                          } else {
+                            const reader = new FileReader();
+                            reader.onload = (evt) => {
+                              if (evt.target?.result) setBannerImg(evt.target.result as string);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        } catch {
+                          const reader = new FileReader();
+                          reader.onload = (evt) => {
+                            if (evt.target?.result) setBannerImg(evt.target.result as string);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
                 <input
                   type="url"
                   required
-                  placeholder="https://images.unsplash.com/photo-..."
+                  placeholder="Paste URL or Click Upload Photo above"
                   value={bannerImg}
                   onChange={(e) => setBannerImg(e.target.value)}
                   className="w-full p-3.5 bg-[#111] border border-[#333] rounded-2xl text-xs font-mono text-white"
@@ -1254,17 +1287,110 @@ export const AdminPanel: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-300 uppercase mb-2">Offer Banner Images (One URL per line)</label>
-                <textarea
-                  rows={4}
-                  value={offerConfig.bannerImages?.join('\n') || ''}
-                  onChange={(e) => {
-                    const urls = e.target.value.split('\n').map(u => u.trim()).filter(u => u);
-                    setOfferConfig({ ...offerConfig, bannerImages: urls });
-                  }}
-                  placeholder="https://image1.jpg&#10;https://image2.jpg"
-                  className="w-full p-3.5 bg-[#111] border border-[#333] rounded-2xl text-xs font-mono text-white"
-                />
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-xs font-bold text-gray-300 uppercase">
+                    Offer Banner Photos (16:9 Landscape)
+                  </label>
+                  <label className="bg-[#D4AF37] hover:bg-white text-black transition px-4 py-2 rounded-xl text-xs font-black tracking-wider uppercase cursor-pointer flex items-center gap-2 shadow-lg">
+                    <Plus className="w-4 h-4" />
+                    <span>UPLOAD PHOTOS FROM DEVICE</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={async (e) => {
+                        const files = e.target.files;
+                        if (!files || files.length === 0) return;
+                        const current = offerConfig.bannerImages || [];
+                        const newUrls: string[] = [...current];
+                        
+                        for (let i = 0; i < files.length; i++) {
+                          const file = files[i];
+                          try {
+                            const { url, error } = await uploadBannerImage(file);
+                            if (url && !error) {
+                              newUrls.push(url);
+                            } else {
+                              // DataURL fallback so local/offline file upload works 100%
+                              const reader = new FileReader();
+                              reader.onload = (evt) => {
+                                if (evt.target?.result) {
+                                  setOfferConfig({
+                                    ...useStore.getState().offerConfig,
+                                    bannerImages: [...useStore.getState().offerConfig.bannerImages, evt.target.result as string]
+                                  });
+                                }
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          } catch {
+                            const reader = new FileReader();
+                            reader.onload = (evt) => {
+                              if (evt.target?.result) {
+                                setOfferConfig({
+                                  ...useStore.getState().offerConfig,
+                                  bannerImages: [...useStore.getState().offerConfig.bannerImages, evt.target.result as string]
+                                });
+                              }
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }
+                        setOfferConfig({ ...offerConfig, bannerImages: newUrls });
+                      }}
+                    />
+                  </label>
+                </div>
+
+                {/* Visual Photo Gallery */}
+                {offerConfig.bannerImages && offerConfig.bannerImages.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 bg-[#111] p-4 rounded-2xl border border-[#333]">
+                    {offerConfig.bannerImages.map((imgUrl, idx) => (
+                      <div key={idx} className="relative aspect-[16/9] rounded-xl overflow-hidden border border-[#333] group bg-black">
+                        <img src={imgUrl} alt={`Banner ${idx + 1}`} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = offerConfig.bannerImages.filter((_, i) => i !== idx);
+                              setOfferConfig({ ...offerConfig, bannerImages: updated });
+                            }}
+                            className="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-lg cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                        <span className="absolute bottom-1 left-2 text-[9px] font-mono text-white/80 bg-black/60 px-1.5 py-0.5 rounded">
+                          Photo #{idx + 1}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-[#111] p-8 rounded-2xl border border-dashed border-[#333] text-center text-gray-500 space-y-2">
+                    <ImageIcon className="w-8 h-8 mx-auto text-gray-600" />
+                    <p className="text-xs">No offer banner photos uploaded yet.</p>
+                    <p className="text-[10px] text-[#D4AF37]">Click "UPLOAD PHOTOS FROM DEVICE" above to select images directly from your phone gallery.</p>
+                  </div>
+                )}
+
+                <details className="mt-3 text-xs text-gray-500">
+                  <summary className="cursor-pointer hover:text-gray-300 font-mono text-[11px]">
+                    Advanced: View or paste image URLs manually
+                  </summary>
+                  <textarea
+                    rows={3}
+                    value={offerConfig.bannerImages?.join('\n') || ''}
+                    onChange={(e) => {
+                      const urls = e.target.value.split('\n').map(u => u.trim()).filter(u => u);
+                      setOfferConfig({ ...offerConfig, bannerImages: urls });
+                    }}
+                    placeholder="https://image1.jpg"
+                    className="w-full mt-2 p-3 bg-[#111] border border-[#333] rounded-xl text-xs font-mono text-white"
+                  />
+                </details>
               </div>
 
               <div className="p-4 bg-[#111] rounded-2xl border border-[#333] space-y-2">
