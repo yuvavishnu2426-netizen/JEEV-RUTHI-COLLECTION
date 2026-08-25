@@ -197,11 +197,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleCloseModal = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setStep('input');
+    setError(null);
+    setDemoOtpCode(null);
+    onClose();
+  };
+
   return (
     <AnimatePresence>
       <div 
-        onClick={onClose}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md font-sans cursor-pointer"
+        onClick={handleCloseModal}
+        className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md font-sans cursor-pointer select-none"
       >
         <motion.div
           onClick={(e) => e.stopPropagation()}
@@ -209,17 +220,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ duration: 0.3 }}
-          className="relative w-full max-w-md bg-white text-[#111] rounded-3xl shadow-2xl border border-amber-500/20 overflow-hidden cursor-default"
+          className="relative w-full max-w-md bg-white text-[#111] rounded-3xl shadow-2xl border border-amber-500/30 overflow-hidden cursor-default"
         >
           {/* Header */}
           <div className="bg-[#111111] text-[#D4AF37] p-8 text-center relative border-b border-[#222]">
             <button
-              onClick={onClose}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white transition p-2 rounded-full cursor-pointer z-30 bg-white/5 hover:bg-white/10"
+              onClick={handleCloseModal}
+              className="absolute top-4 right-4 text-white bg-red-600 hover:bg-red-700 transition p-2.5 rounded-full cursor-pointer z-[100000] flex items-center justify-center shadow-lg border border-red-400"
               aria-label="Close"
               type="button"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 text-white stroke-[3]" />
             </button>
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#1e1e1e] border border-[#D4AF37]/50 mb-3 shadow-lg">
               <Lock className="w-6 h-6 text-[#D4AF37]" />
@@ -300,8 +311,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   </button>
                 </form>
 
-                {/* Google Login */}
-                <div className="mt-6 pt-6 border-t border-gray-100">
+                {/* Google Login & Close Action */}
+                <div className="mt-6 pt-6 border-t border-gray-100 space-y-3">
                   <button
                     type="button"
                     onClick={handleGoogleLogin}
@@ -315,6 +326,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                       <path fill="#EA4335" d="M12 4.75c1.795 0 3.41.615 4.675 1.815l3.51-3.51C18.07 1.17 15.3 0 12 0 7.31 0 3.255 2.77 1.05 6.88l3.92 3.1C5.96 7.01 8.73 4.75 12 4.75Z"/>
                     </svg>
                     <span>CONTINUE WITH GOOGLE</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleCloseModal}
+                    className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-bold text-xs tracking-wider flex items-center justify-center gap-2 cursor-pointer transition border border-gray-200"
+                  >
+                    <X className="w-4 h-4 text-gray-600" />
+                    <span>CLOSE CONCIERGE PORTAL</span>
                   </button>
                 </div>
               </>
