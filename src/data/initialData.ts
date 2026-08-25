@@ -1,5 +1,17 @@
 import { Product, Review } from '../types';
 
+const IMG_SAREE_GOLD = 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1000&auto=format&fit=crop';
+const IMG_SAREE_RED = 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=1000&auto=format&fit=crop';
+const IMG_SAREE_BLACK = 'https://images.unsplash.com/photo-1610030469783-99b5003ab79b?q=80&w=1000&auto=format&fit=crop';
+const IMG_KURTI_WHITE = 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1000&auto=format&fit=crop';
+const IMG_KURTI_NAVY = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop';
+const IMG_SALWAR_SHARARA = 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1000&auto=format&fit=crop';
+const IMG_GOWN_GOLD = 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=1000&auto=format&fit=crop';
+const IMG_TOP_WHITE = 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=1000&auto=format&fit=crop';
+const IMG_KIDS_SHIRT = 'https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?q=80&w=1000&auto=format&fit=crop';
+const IMG_KIDS_GOWN = 'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?q=80&w=1000&auto=format&fit=crop';
+const IMG_KIDS_SHERWANI = 'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?q=80&w=1000&auto=format&fit=crop';
+
 // ============================================================
 // FALLBACK PRODUCTS — Used only until Supabase data loads
 // These mirror the Supabase schema field names
