@@ -128,9 +128,10 @@ const DEFAULT_FILTERS: ShopFilters = {
 const DEFAULT_OFFER_CONFIG: OfferSectionConfig = {
   isActive: true,
   bannerImages: [
-    'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1600&auto=format&fit=crop',
     'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1583391733958-6115915d31d4?q=80&w=1600&auto=format&fit=crop'
+    'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=1600&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1600&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=1600&auto=format&fit=crop'
   ],
   title: 'LIMITED EDITION GOLD PRIVILEGE SALE',
   subtitle: 'Experience Uncompromised Luxury - Up to 30% Off Authentic Kanchipuram Weaves & Designer Kurtis',

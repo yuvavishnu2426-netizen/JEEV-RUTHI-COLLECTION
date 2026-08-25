@@ -32,9 +32,10 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onSelectProduct, o
   const slideImages = offerConfig.bannerImages?.length > 0 
     ? offerConfig.bannerImages 
     : [
-        'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1600&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1583391733958-6115915d31d4?q=80&w=1600&auto=format&fit=crop'
+        'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=1600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=1600&auto=format&fit=crop'
       ];
 
   useEffect(() => {
@@ -102,36 +103,6 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onSelectProduct, o
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-black tracking-widest uppercase shadow-lg shadow-black/50">
             <Sparkles className="w-4 h-4 animate-spin" style={{ animationDuration: '4s' }} />
             <span>EXCLUSIVELY PRIVILEGED SOIRÉE</span>
-          </div>
-
-          {/* Admin Countdown Control Timer Box */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-6">
-            <div className="flex items-center gap-2 bg-[#222222]/80 border border-[#D4AF37]/30 px-5 py-3 rounded-2xl shadow-xl">
-              <Timer className="w-5 h-5 text-[#D4AF37] animate-pulse" />
-              <span className="text-xs font-semibold tracking-widest text-gray-300">OFFER EXPIRING IN:</span>
-            </div>
-
-            <div className="flex items-center gap-2 font-mono font-bold">
-              <div className="bg-[#D4AF37] text-[#111] px-3.5 py-2 rounded-xl text-lg min-w-[50px] text-center shadow-md">
-                {timeLeft.days}
-                <span className="block text-[9px] font-sans font-extrabold uppercase tracking-widest text-[#222]">Days</span>
-              </div>
-              <span className="text-xl text-[#D4AF37]">:</span>
-              <div className="bg-[#D4AF37] text-[#111] px-3.5 py-2 rounded-xl text-lg min-w-[50px] text-center shadow-md">
-                {String(timeLeft.hours).padStart(2, '0')}
-                <span className="block text-[9px] font-sans font-extrabold uppercase tracking-widest text-[#222]">Hours</span>
-              </div>
-              <span className="text-xl text-[#D4AF37]">:</span>
-              <div className="bg-[#D4AF37] text-[#111] px-3.5 py-2 rounded-xl text-lg min-w-[50px] text-center shadow-md">
-                {String(timeLeft.minutes).padStart(2, '0')}
-                <span className="block text-[9px] font-sans font-extrabold uppercase tracking-widest text-[#222]">Mins</span>
-              </div>
-              <span className="text-xl text-[#D4AF37]">:</span>
-              <div className="bg-[#D4AF37] text-[#111] px-3.5 py-2 rounded-xl text-lg min-w-[50px] text-center shadow-md">
-                {String(timeLeft.seconds).padStart(2, '0')}
-                <span className="block text-[9px] font-sans font-extrabold uppercase tracking-widest text-[#222]">Secs</span>
-              </div>
-            </div>
           </div>
         </motion.div>
 

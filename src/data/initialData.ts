@@ -323,7 +323,7 @@ export const DEFAULT_HOMEPAGE_BANNERS = [
   },
   {
     id: 'hb-2',
-    image_url: 'https://images.unsplash.com/photo-1583391733958-6115915d31d4?q=80&w=1600&auto=format&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=1600&auto=format&fit=crop',
     title: 'EXCLUSIVE DESIGNER KURTIS',
     subtitle: 'Opulent Handcrafted Embellishments & Micro-Velvet Tailoring',
     cta_text: 'DISCOVER COLLECTION',
@@ -333,10 +333,10 @@ export const DEFAULT_HOMEPAGE_BANNERS = [
   },
   {
     id: 'hb-3',
-    image_url: 'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1600&auto=format&fit=crop',
-    title: 'ELITE KIDS CELEBRATION WEAR',
-    subtitle: 'Designer Party Dresses & Royal Sets for Little Princes & Princesses',
-    cta_text: 'SHOP KIDS GALA',
+    image_url: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1600&auto=format&fit=crop',
+    title: 'ELITE FESTIVE & KIDS WEAR',
+    subtitle: 'Handwoven Brocades, Designer Partywear & Festive Sets',
+    cta_text: 'SHOP CELEBRATION WEAR',
     cta_link: '/shop',
     display_order: 3,
     is_active: true,
