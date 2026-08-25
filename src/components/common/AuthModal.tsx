@@ -52,17 +52,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }, 1000);
   };
 
-  if (!isOpen) return null;
+  const [demoOtpCode, setDemoOtpCode] = useState<string | null>(null);
 
   // ── Send OTP ──────────────────────────────────────────────────
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setDemoOtpCode(null);
     if (!inputValue.trim()) return;
 
     setLoading(true);
     try {
-      let result: { error: string | null };
+      let result: { error: string | null; demoOtp?: string; isDemoMode?: boolean };
       if (authMethod === 'mobile') {
         const phone = inputValue.replace(/\D/g, '');
         if (phone.length < 10) {
@@ -84,6 +85,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         setError(result.error);
       } else {
         setStep('otp');
+        if (result.demoOtp) {
+          setDemoOtpCode(result.demoOtp);
+        }
         setOtp(Array(authMethod === 'mobile' ? 6 : 8).fill(''));
         startResendTimer();
         setTimeout(() => inputRefs.current[0]?.focus(), 300);
@@ -344,14 +348,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   </div>
                   <h3 className="font-extrabold text-sm">ENTER ONE TIME PASSWORD</h3>
                   <p className="text-xs text-gray-500 mt-1">
-                    Sent to{' '}
+                    Sent via Fast2SMS to{' '}
                     <span className="font-mono text-[#D4AF37] font-bold">
                       {authMethod === 'mobile' ? `+91 ${inputValue}` : inputValue}
                     </span>
                   </p>
+                  {demoOtpCode && (
+                    <div className="mt-3 p-2.5 bg-amber-50 border border-amber-300/80 rounded-xl text-xs text-amber-900 font-medium">
+                      <div className="font-bold flex items-center justify-center gap-1 text-amber-700">
+                        <span>📲 Fast2SMS Demo Code:</span>
+                        <span className="font-mono text-base font-extrabold tracking-widest text-[#111]">{demoOtpCode}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setOtp(demoOtpCode.split(''))}
+                        className="mt-1 text-[11px] underline text-amber-800 font-bold hover:text-black"
+                      >
+                        Auto-fill OTP Code
+                      </button>
+                    </div>
+                  )}
                   <button
-                    onClick={() => { setStep('input'); setError(null); }}
-                    className="text-[11px] text-amber-600 hover:underline font-bold mt-1"
+                    onClick={() => { setStep('input'); setError(null); setDemoOtpCode(null); }}
+                    className="text-[11px] text-amber-600 hover:underline font-bold mt-2"
                   >
                     Change {authMethod === 'mobile' ? 'Mobile Number' : 'Email'}
                   </button>

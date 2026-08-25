@@ -1,25 +1,19 @@
-import { supabase } from './supabase';
-import type { User, Session } from '@supabase/supabase-js';
+import { sendFast2SMSOTP, verifyFast2SMSOTP } from './fast2sms';
 
 // ============================================================
-// PHONE OTP AUTHENTICATION
+// PHONE OTP AUTHENTICATION (FAST2SMS + SUPABASE)
 // ============================================================
 
 /**
- * Send OTP to phone number via Supabase (uses configured SMS provider)
- * Phone must be in E.164 format: +919876543210
+ * Send OTP to phone number via Fast2SMS API (Indian carrier delivery)
+ * Formats: 10-digit number or +91 format
  */
-export async function sendPhoneOtp(phone: string): Promise<{ error: string | null }> {
-  const formattedPhone = phone.startsWith('+') ? phone : `+91${phone.replace(/\D/g, '')}`;
-
-  const { error } = await supabase.auth.signInWithOtp({
-    phone: formattedPhone,
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-  return { error: null };
+export async function sendPhoneOtp(phone: string): Promise<{ 
+  error: string | null; 
+  demoOtp?: string;
+  isDemoMode?: boolean;
+}> {
+  return await sendFast2SMSOTP(phone);
 }
 
 /**
@@ -28,19 +22,13 @@ export async function sendPhoneOtp(phone: string): Promise<{ error: string | nul
 export async function verifyPhoneOtp(
   phone: string,
   token: string
-): Promise<{ session: Session | null; error: string | null }> {
-  const formattedPhone = phone.startsWith('+') ? phone : `+91${phone.replace(/\D/g, '')}`;
-
-  const { data, error } = await supabase.auth.verifyOtp({
-    phone: formattedPhone,
-    token,
-    type: 'sms',
-  });
-
-  if (error) {
-    return { session: null, error: error.message };
-  }
-  return { session: data.session, error: null };
+): Promise<{ session: Session | null; error: string | null; user?: any }> {
+  const result = await verifyFast2SMSOTP(phone, token);
+  return {
+    session: null,
+    error: result.error,
+    user: result.user,
+  };
 }
 
 // ============================================================
