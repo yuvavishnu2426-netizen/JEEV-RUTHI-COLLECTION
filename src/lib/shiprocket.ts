@@ -78,18 +78,28 @@ let tokenExpiryTime: number = 0;
  * Get Shiprocket credentials from env or localStorage
  */
 export function getShiprocketCredentials(): { email: string; pass: string; pickupPincode: string } {
+  let localEmail = (localStorage.getItem('shiprocket_email') || '').trim();
+  let localPass = (localStorage.getItem('shiprocket_password') || '').trim();
+  let localPincode = (localStorage.getItem('shiprocket_pickup_pincode') || '').trim();
+
+  // If local storage contains old web login email, automatically upgrade to working API user credentials
+  if (!localEmail || localEmail === '9043551819@quick.com') {
+    localEmail = 'jeevruthi.api@gmail.com';
+    localPass = 'W6yTYRedvrRyz%qJJ!A30ieX0oZtUMxx';
+    try {
+      localStorage.setItem('shiprocket_email', 'jeevruthi.api@gmail.com');
+      localStorage.setItem('shiprocket_password', 'W6yTYRedvrRyz%qJJ!A30ieX0oZtUMxx');
+    } catch {}
+  }
+
   const envEmail = (import.meta.env?.VITE_SHIPROCKET_EMAIL || '').trim();
   const envPass = (import.meta.env?.VITE_SHIPROCKET_PASSWORD || '').trim();
   const envPincode = (import.meta.env?.VITE_SHIPROCKET_PICKUP_PINCODE || '600116').trim();
 
-  const localEmail = localStorage.getItem('shiprocket_email') || '';
-  const localPass = localStorage.getItem('shiprocket_password') || '';
-  const localPincode = localStorage.getItem('shiprocket_pickup_pincode') || '';
-
   return {
-    email: envEmail || localEmail || 'jeevruthi.api@gmail.com',
-    pass: envPass || localPass || 'W6yTYRedvrRyz%qJJ!A30ieX0oZtUMxx',
-    pickupPincode: envPincode || localPincode || '600116',
+    email: localEmail || envEmail || 'jeevruthi.api@gmail.com',
+    pass: localPass || envPass || 'W6yTYRedvrRyz%qJJ!A30ieX0oZtUMxx',
+    pickupPincode: localPincode || envPincode || '600116',
   };
 }
 
