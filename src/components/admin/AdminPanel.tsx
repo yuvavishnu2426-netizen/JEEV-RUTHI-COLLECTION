@@ -1475,7 +1475,7 @@ export const AdminPanel: React.FC = () => {
                     type="email"
                     value={srEmail}
                     onChange={(e) => setSrEmail(e.target.value)}
-                    placeholder="e.g. store@jeevruthi.com"
+                    placeholder="e.g. 9043551819@quick.com"
                     className="w-full p-3 bg-[#111] border border-[#333] rounded-xl text-xs font-mono text-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
@@ -1498,7 +1498,7 @@ export const AdminPanel: React.FC = () => {
                     maxLength={6}
                     value={srPickupPincode}
                     onChange={(e) => setSrPickupPincode(e.target.value.replace(/\D/g, ''))}
-                    placeholder="600001"
+                    placeholder="600116"
                     className="w-full p-3 bg-[#111] border border-[#333] rounded-xl text-xs font-mono text-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
@@ -1513,6 +1513,19 @@ export const AdminPanel: React.FC = () => {
                   </button>
                 </div>
               </form>
+
+              {/* 30-Second API User Activation Guide */}
+              <div className="p-5 bg-[#111] rounded-2xl border border-amber-500/30 space-y-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#D4AF37] uppercase tracking-wider font-cinzel">
+                  <span>💡 How to Activate API Access in Shiprocket Dashboard (30 Seconds)</span>
+                </div>
+                <ol className="text-xs text-gray-300 space-y-2 list-decimal list-inside font-sans leading-relaxed">
+                  <li>Log in to your Shiprocket Dashboard: <a href="https://app.shiprocket.in" target="_blank" rel="noopener noreferrer" className="text-[#D4AF37] underline font-mono">app.shiprocket.in</a></li>
+                  <li>Click <strong>Settings (⚙️)</strong> on the bottom left menu &rarr; Click <strong>API</strong> &rarr; Click <strong>API Users</strong>.</li>
+                  <li>Click <strong>"Add API User"</strong>, enter an API Email & Password (e.g. <code className="text-[#D4AF37]">9043551819@quick.com</code> / <code className="text-[#D4AF37]">JeevRuthi@2026</code>), and click Save.</li>
+                  <li>Enter those API credentials above and click <strong>"TEST API CONNECTION"</strong>. It will instantly connect!</li>
+                </ol>
+              </div>
             </div>
 
             {/* Shiprocket Orders Ready for Dispatch */}

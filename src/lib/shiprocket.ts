@@ -96,15 +96,15 @@ export function getShiprocketCredentials(): { email: string; pass: string; picku
 /**
  * Authenticate with Shiprocket API and cache JWT token
  */
-export async function getShiprocketToken(): Promise<string | null> {
+export async function getShiprocketToken(): Promise<{ token: string | null; error?: string }> {
   // Return cached token if valid (Shiprocket tokens last 10 days)
   if (cachedToken && Date.now() < tokenExpiryTime) {
-    return cachedToken;
+    return { token: cachedToken };
   }
 
   const { email, pass } = getShiprocketCredentials();
   if (!email || !pass) {
-    return null;
+    return { token: null, error: 'Please enter your Shiprocket Email and Password.' };
   }
 
   try {
@@ -114,20 +114,28 @@ export async function getShiprocketToken(): Promise<string | null> {
       body: JSON.stringify({ email, password: pass }),
     });
 
-    if (!response.ok) {
-      return null;
-    }
+    const data = await response.json().catch(() => ({}));
 
-    const data = await response.json();
-    if (data.token) {
+    if (response.ok && data.token) {
       cachedToken = data.token;
       tokenExpiryTime = Date.now() + 9 * 24 * 60 * 60 * 1000; // Cache for 9 days
-      return cachedToken;
+      return { token: cachedToken };
     }
-  } catch (err) {
-    console.warn('Shiprocket auth exception:', err);
+
+    if (response.status === 403 || data.message === 'Access forbidden') {
+      return {
+        token: null,
+        error: 'API Access Pending: In Shiprocket Dashboard, go to Settings (⚙️) -> API -> API Users -> "Add API User" to enable API login for this account.',
+      };
+    }
+
+    return {
+      token: null,
+      error: data.message || 'Shiprocket authentication failed. Please check credentials.',
+    };
+  } catch (err: any) {
+    return { token: null, error: err.message || 'Shiprocket API connection failed.' };
   }
-  return null;
 }
 
 /**
@@ -169,7 +177,7 @@ export async function checkPincodeServiceability(
   }
 
   const { pickupPincode } = getShiprocketCredentials();
-  const token = await getShiprocketToken();
+  const { token } = await getShiprocketToken();
 
   // ── 1. Try Live Shiprocket API ────────────────────────────────
   if (token) {
@@ -253,11 +261,11 @@ export async function checkPincodeServiceability(
 export async function createShiprocketOrder(
   orderInput: ShiprocketOrderInput
 ): Promise<{ success: boolean; shiprocketOrderId?: number; awbCode?: string; error?: string }> {
-  const token = await getShiprocketToken();
+  const { token, error: tokenError } = await getShiprocketToken();
   if (!token) {
     return {
       success: false,
-      error: 'Shiprocket API key not configured or authentication pending.',
+      error: tokenError || 'Shiprocket API key not configured or authentication pending.',
     };
   }
 
@@ -323,7 +331,7 @@ export async function trackShiprocketShipment(
     return { success: false, currentStatus: 'UNKNOWN', error: 'Invalid AWB tracking code.' };
   }
 
-  const token = await getShiprocketToken();
+  const { token } = await getShiprocketToken();
   if (token) {
     try {
       const response = await fetch(`${SHIPROCKET_BASE_URL}/courier/track/awb/${cleanAWB}`, {
