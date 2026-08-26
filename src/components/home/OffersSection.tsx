@@ -84,27 +84,13 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onSelectProduct, o
   if (!offerConfig.isActive) return null;
 
   return (
-    <section className="bg-gradient-to-b from-[#161616] via-[#111111] to-[#1a1a1a] text-white pt-8 pb-16 relative overflow-hidden font-sans border-b border-[#2A2A2A]">
+    <section className="bg-gradient-to-b from-[#161616] via-[#111111] to-[#1a1a1a] text-white pt-0 pb-16 relative overflow-hidden font-sans border-b border-[#2A2A2A]">
       
       {/* Absolute decorative gold glow spheres */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Upper Announcement Header */}
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-center max-w-3xl mx-auto mb-6 px-4 relative z-10"
-      >
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-black tracking-widest uppercase shadow-lg shadow-black/50">
-          <Sparkles className="w-4 h-4 animate-spin" style={{ animationDuration: '4s' }} />
-          <span>EXCLUSIVELY PRIVILEGED SOIRÉE</span>
-        </div>
-      </motion.div>
-
-      {/* FULL SCREEN EDGE-TO-EDGE IMAGE BANNER SLIDER (NO FRAME / NO ROUNDED CORNERS / NO MARGINS) */}
+      {/* FULL SCREEN EDGE-TO-EDGE IMAGE BANNER SLIDER (NO TOP GAP / NO TEXT BADGE) */}
       {offerConfig.bannerImages && offerConfig.bannerImages.length > 0 && (
         <motion.div 
           initial={{ opacity: 0 }}
