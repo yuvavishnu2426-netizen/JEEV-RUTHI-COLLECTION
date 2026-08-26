@@ -84,68 +84,65 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onSelectProduct, o
   if (!offerConfig.isActive) return null;
 
   return (
-    <section className="bg-gradient-to-b from-[#161616] via-[#111111] to-[#1a1a1a] text-white pt-10 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans border-b border-[#2A2A2A]">
+    <section className="bg-gradient-to-b from-[#161616] via-[#111111] to-[#1a1a1a] text-white pt-8 pb-16 relative overflow-hidden font-sans border-b border-[#2A2A2A]">
       
       {/* Absolute decorative gold glow spheres */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-[95rem] mx-auto relative z-10">
-        
-        {/* Upper Announcement Header */}
+      {/* Upper Announcement Header */}
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="text-center max-w-3xl mx-auto mb-6 px-4 relative z-10"
+      >
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-black tracking-widest uppercase shadow-lg shadow-black/50">
+          <Sparkles className="w-4 h-4 animate-spin" style={{ animationDuration: '4s' }} />
+          <span>EXCLUSIVELY PRIVILEGED SOIRÉE</span>
+        </div>
+      </motion.div>
+
+      {/* FULL SCREEN EDGE-TO-EDGE IMAGE BANNER SLIDER (NO FRAME / NO ROUNDED CORNERS / NO MARGINS) */}
+      {offerConfig.bannerImages && offerConfig.bannerImages.length > 0 && (
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-8"
+          transition={{ duration: 0.7 }}
+          className="relative w-full overflow-hidden shadow-2xl mb-16 cursor-pointer group bg-[#111] relative z-10"
+          onClick={() => onNavigateShop('Offers')}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-black tracking-widest uppercase shadow-lg shadow-black/50">
-            <Sparkles className="w-4 h-4 animate-spin" style={{ animationDuration: '4s' }} />
-            <span>EXCLUSIVELY PRIVILEGED SOIRÉE</span>
+          <div className="grid w-full aspect-[16/9] overflow-hidden">
+            <AnimatePresence>
+              <motion.img 
+                key={currentSlide}
+                initial={{ opacity: 0, scale: 1.03 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.0 }}
+                src={slideImages[currentSlide]} 
+                alt={offerConfig.title} 
+                className="col-start-1 row-start-1 w-full h-full object-cover object-top md:object-center block transition duration-1000 group-hover:scale-[1.02]"
+              />
+            </AnimatePresence>
+          </div>
+
+          {/* Slider Dots */}
+          <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex gap-2 z-20 drop-shadow-lg">
+            {slideImages.map((_, idx) => (
+              <button 
+                key={idx}
+                onClick={(e) => { e.stopPropagation(); setCurrentSlide(idx); }}
+                className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 shadow-xl ${currentSlide === idx ? 'bg-[#D4AF37] w-6 sm:w-8' : 'bg-white/70 hover:bg-white'}`}
+              />
+            ))}
           </div>
         </motion.div>
+      )}
 
-        {/* Offer Banner Custom Image Layout with Slider */}
-        {offerConfig.bannerImages && offerConfig.bannerImages.length > 0 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="relative rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-[#D4AF37]/30 mb-16 cursor-pointer group bg-[#111] [perspective:1000px] transform-gpu"
-            onClick={() => onNavigateShop('Offers')}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={{ rotateX, rotateY, scale, transformStyle: "preserve-3d" }}
-          >
-            <div className="grid w-full aspect-[16/9] overflow-hidden" style={{ transform: "translateZ(30px)" }}>
-              <AnimatePresence>
-                <motion.img 
-                  key={currentSlide}
-                  initial={{ opacity: 0, scale: 1.05 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.2 }}
-                  src={slideImages[currentSlide]} 
-                  alt={offerConfig.title} 
-                  className="col-start-1 row-start-1 w-full h-full object-cover object-top md:object-center block transition duration-1000 group-hover:scale-[1.03]"
-                />
-              </AnimatePresence>
-            </div>
-
-            {/* Slider Dots */}
-            <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex gap-2 z-20 drop-shadow-lg">
-              {slideImages.map((_, idx) => (
-                <button 
-                  key={idx}
-                  onClick={(e) => { e.stopPropagation(); setCurrentSlide(idx); }}
-                  className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 shadow-xl ${currentSlide === idx ? 'bg-[#D4AF37] w-6 sm:w-8' : 'bg-white/70 hover:bg-white'}`}
-                />
-              ))}
-            </div>
-          </motion.div>
-        )}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Admin Offer Products List */}
         <div>
