@@ -80,16 +80,16 @@ let tokenExpiryTime: number = 0;
 export function getShiprocketCredentials(): { email: string; pass: string; pickupPincode: string } {
   const envEmail = (import.meta.env?.VITE_SHIPROCKET_EMAIL || '').trim();
   const envPass = (import.meta.env?.VITE_SHIPROCKET_PASSWORD || '').trim();
-  const envPincode = (import.meta.env?.VITE_SHIPROCKET_PICKUP_PINCODE || '600001').trim();
+  const envPincode = (import.meta.env?.VITE_SHIPROCKET_PICKUP_PINCODE || '600116').trim();
 
   const localEmail = localStorage.getItem('shiprocket_email') || '';
   const localPass = localStorage.getItem('shiprocket_password') || '';
   const localPincode = localStorage.getItem('shiprocket_pickup_pincode') || '';
 
   return {
-    email: envEmail || localEmail,
-    pass: envPass || localPass,
-    pickupPincode: envPincode || localPincode || '600001',
+    email: envEmail || localEmail || 'jeevruthi.api@gmail.com',
+    pass: envPass || localPass || 'W6yTYRedvrRyz%qJJ!A30ieX0oZtUMxx',
+    pickupPincode: envPincode || localPincode || '600116',
   };
 }
 
