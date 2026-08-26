@@ -907,10 +907,44 @@ export const AdminPanel: React.FC = () => {
                     </div>
       
                     <div>
-                      <label className="block text-xs font-bold text-[#D4AF37] uppercase mb-2">High-Res Image URL *</label>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-xs font-bold text-[#D4AF37] uppercase">Hero Slide Image *</label>
+                        <label className="bg-[#D4AF37] hover:bg-white text-black transition px-3 py-1.5 rounded-lg text-xs font-bold uppercase cursor-pointer flex items-center gap-1.5">
+                          <UploadCloud className="w-3.5 h-3.5" />
+                          <span>📷 Upload Photo from Device</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              try {
+                                const { url, error } = await uploadBannerImage(file);
+                                if (url && !error) {
+                                  setHeroImg(url);
+                                } else {
+                                  const reader = new FileReader();
+                                  reader.onload = (evt) => {
+                                    if (evt.target?.result) setHeroImg(evt.target.result as string);
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              } catch {
+                                const reader = new FileReader();
+                                reader.onload = (evt) => {
+                                  if (evt.target?.result) setHeroImg(evt.target.result as string);
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                          />
+                        </label>
+                      </div>
                       <input
                         type="url"
                         required
+                        placeholder="Paste URL or Click Upload Photo above"
                         value={heroImg}
                         onChange={(e) => setHeroImg(e.target.value)}
                         className="w-full p-3.5 bg-[#111] border border-[#333] rounded-2xl text-xs text-emerald-400 font-mono"
