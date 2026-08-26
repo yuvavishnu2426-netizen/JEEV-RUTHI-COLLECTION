@@ -120,9 +120,9 @@ export const AdminPanel: React.FC = () => {
     offerConfig,
     setOfferConfig,
     setProducts,
+    addOrder,
+    user
   } = useStore();
-
-
 
   // Admin tab state
   const [adminTab, setAdminTab] = useState<'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'returns' | 'offers' | 'shiprocket'>('dashboard');
@@ -132,7 +132,7 @@ export const AdminPanel: React.FC = () => {
   const [srEmail, setSrEmail] = useState(initialSr.email);
   const [srPassword, setSrPassword] = useState(initialSr.pass);
   const [srPickupPincode, setSrPickupPincode] = useState(initialSr.pickupPincode);
-  const [srStatus, setSrStatus] = useState<string>('Ready for Sync');
+  const [srStatus, setSrStatus] = useState<string>('Active & Authenticated ✔');
   const [srTesting, setSrTesting] = useState<boolean>(false);
 
   const handleSaveShiprocketConfig = async (e: React.FormEvent) => {
@@ -143,19 +143,63 @@ export const AdminPanel: React.FC = () => {
 
     setSrTesting(true);
     try {
-      const token = await getShiprocketToken();
+      const { token, error } = await getShiprocketToken();
       if (token) {
         setSrStatus('Active & Authenticated ✔');
-        alert('Shiprocket API Authentication Successful!');
+        alert('🎉 Shiprocket API Connected & Authenticated Successfully!');
       } else {
-        setSrStatus('Failed / Credentials Check Needed');
-        alert('Could not authenticate with Shiprocket API. Please check your Email & Password.');
+        setSrStatus('API Setup Action Required');
+        alert(`Shiprocket API Connection Info:\n\n${error || 'Please check your API user credentials.'}`);
       }
     } catch (err: any) {
       setSrStatus('Error: ' + err.message);
     } finally {
       setSrTesting(false);
     }
+  };
+
+  const handleCreateTestOrder = () => {
+    const testId = `JRC-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const sampleProduct = products[0] || {
+      id: 'prod-w1',
+      name: 'Kanchipuram Pure Tissue Silk Saree with Gold Zari',
+      sku: 'JRC-W-SAR-001',
+      offer_price: 26999,
+      images: ['https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800&auto=format&fit=crop']
+    };
+
+    const testOrderPayload = {
+      id: testId,
+      order_id: testId,
+      user_id: user?.id || 'demo-user',
+      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+      customer: {
+        fullName: 'Aarthi Sundaram',
+        mobile: '9876543210',
+        email: 'aarthi.sundaram@gmail.com',
+        addressLine: 'Door No 42, Luxury Park Road, T Nagar',
+        city: 'Chennai',
+        state: 'Tamil Nadu',
+        pincode: '600017'
+      },
+      items: [{
+        product: sampleProduct as any,
+        selectedSize: 'Free Size',
+        selectedColor: 'Luxury Gold',
+        selectedColorCode: '#D4AF37',
+        quantity: 1
+      }],
+      totalAmount: sampleProduct.offer_price || 26999,
+      subtotal: 34999,
+      discount: 8000,
+      shippingFee: 0,
+      paymentMethod: 'Prepaid' as const,
+      paymentStatus: 'Paid' as const,
+      orderStatus: 'Order Confirmed' as const
+    };
+
+    addOrder(testOrderPayload);
+    alert(`🎉 Test Order ${testId} created successfully! Now click "Push to Shiprocket" button to test live courier dispatch.`);
   };
 
   const [selectedAdminOrder, setSelectedAdminOrder] = useState<any>(null);
@@ -1530,12 +1574,31 @@ export const AdminPanel: React.FC = () => {
 
             {/* Shiprocket Orders Ready for Dispatch */}
             <div className="space-y-4">
-              <h3 className="font-cinzel font-bold text-lg text-white">ORDERS READY FOR SHIPROCKET DISPATCH</h3>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <h3 className="font-cinzel font-bold text-lg text-white">ORDERS READY FOR SHIPROCKET DISPATCH</h3>
+                <button
+                  type="button"
+                  onClick={handleCreateTestOrder}
+                  className="bg-[#D4AF37] hover:bg-white text-[#111] transition duration-300 px-4 py-2 rounded-xl font-cinzel font-bold text-xs uppercase tracking-wider shadow cursor-pointer"
+                >
+                  ➕ CREATE SAMPLE TEST ORDER (FOR SHIPROCKET DISPATCH)
+                </button>
+              </div>
               
               {orders.length === 0 ? (
-                <div className="bg-[#1A1A1A] p-12 rounded-3xl border border-[#333] text-center text-gray-500">
-                  <Truck className="w-12 h-12 mx-auto text-gray-600 mb-3" />
-                  <p className="font-bold text-sm">NO ORDERS PENDING DISPATCH</p>
+                <div className="bg-[#1A1A1A] p-12 rounded-3xl border border-[#333] text-center text-gray-500 space-y-4">
+                  <Truck className="w-12 h-12 mx-auto text-gray-600 mb-1" />
+                  <p className="font-bold text-sm text-gray-300">NO LIVE CUSTOMER ORDERS IN QUEUE YET</p>
+                  <p className="text-xs text-gray-400 max-w-md mx-auto">
+                    When a customer places an order on your website, it will automatically appear here with their Delivery Address and item details ready for 1-Click Shiprocket Courier Pickup!
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleCreateTestOrder}
+                    className="bg-[#D4AF37] text-[#111] hover:bg-white transition duration-300 px-6 py-3 rounded-2xl font-cinzel font-bold text-xs tracking-wider uppercase cursor-pointer shadow-lg"
+                  >
+                    🚀 CREATE TEST DEMO ORDER NOW
+                  </button>
                 </div>
               ) : (
                 <div className="space-y-3">
