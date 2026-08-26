@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { Product } from '../../types';
+import { checkPincodeServiceability, PincodeServiceabilityResult } from '../../lib/shiprocket';
 
 interface ProductDetailPageProps {
   product: Product;
@@ -55,6 +56,32 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   const [zoomScale, setZoomScale] = useState<number>(1);
   const [fullscreenOpen, setFullscreenOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'desc' | 'spec' | 'shipping'>('desc');
+
+  // Shiprocket Pincode Checker State
+  const [pincodeInput, setPincodeInput] = useState<string>('');
+  const [checkingPincode, setCheckingPincode] = useState<boolean>(false);
+  const [pincodeResult, setPincodeResult] = useState<PincodeServiceabilityResult | null>(null);
+
+  const handleCheckPincode = async () => {
+    const clean = pincodeInput.replace(/\D/g, '').slice(0, 6);
+    if (clean.length !== 6) return;
+    setCheckingPincode(true);
+    try {
+      const res = await checkPincodeServiceability(clean);
+      setPincodeResult(res);
+    } catch {
+      setPincodeResult({
+        success: false,
+        serviceable: false,
+        deliveryPincode: clean,
+        estimatedDays: 0,
+        estimatedDeliveryDate: '',
+        error: 'Pincode check service temporary offline.'
+      });
+    } finally {
+      setCheckingPincode(false);
+    }
+  };
 
   // When props change, re-initialize selected states properly
   useEffect(() => {
@@ -447,6 +474,66 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 <span>{isOutOfStock ? 'CURRENTLY UNAVAILABLE' : 'SECURE INSTANT BUY NOW (UPI / COD)'}</span>
               </button>
 
+            </div>
+
+            {/* SHIPROCKET PINCODE SERVICEABILITY & COURIER CHECKER */}
+            <div className="p-5 bg-gradient-to-br from-amber-50/40 via-white to-gray-50 border border-amber-200/80 rounded-3xl space-y-3 font-sans shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-black text-[#111] uppercase tracking-wider font-cinzel">
+                  <Truck className="w-4 h-4 text-[#D4AF37]" />
+                  <span>CHECK DELIVERY & COURIER SERVICEABILITY</span>
+                </div>
+                <span className="text-[10px] font-mono font-bold text-gray-400">Powered by Shiprocket</span>
+              </div>
+              
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  maxLength={6}
+                  placeholder="Enter 6-digit Pincode (e.g. 600001)"
+                  value={pincodeInput}
+                  onChange={(e) => setPincodeInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleCheckPincode(); }}
+                  className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-2xl text-xs font-mono text-[#111] focus:outline-none focus:border-[#D4AF37] shadow-inner"
+                />
+                <button
+                  type="button"
+                  disabled={checkingPincode || pincodeInput.length !== 6}
+                  onClick={handleCheckPincode}
+                  className="bg-[#111111] hover:bg-[#D4AF37] hover:text-black text-[#D4AF37] transition duration-300 px-5 py-3 rounded-2xl font-cinzel font-bold text-xs tracking-wider uppercase disabled:opacity-50 cursor-pointer shadow"
+                >
+                  {checkingPincode ? 'CHECKING...' : 'CHECK'}
+                </button>
+              </div>
+
+              {pincodeResult && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`p-3.5 rounded-2xl text-xs space-y-1 ${
+                    pincodeResult.serviceable 
+                      ? 'bg-emerald-50/90 text-emerald-900 border border-emerald-200' 
+                      : 'bg-red-50/90 text-red-900 border border-red-200'
+                  }`}
+                >
+                  {pincodeResult.serviceable ? (
+                    <>
+                      <div className="flex items-center gap-1.5 font-bold">
+                        <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span>Pincode {pincodeResult.deliveryPincode} is Serviceable!</span>
+                      </div>
+                      <p className="text-[11px] text-emerald-800 font-medium">
+                        Courier: <strong>{pincodeResult.courierName}</strong> • Est. Delivery: <strong>{pincodeResult.estimatedDeliveryDate}</strong> ({pincodeResult.estimatedDays} days)
+                      </p>
+                      <p className="text-[10px] text-emerald-700 font-bold uppercase tracking-wider">
+                        ✨ Complimentary Free Express Shipping Available
+                      </p>
+                    </>
+                  ) : (
+                    <p className="font-bold text-red-700">{pincodeResult.error || 'Delivery not serviceable to this pincode.'}</p>
+                  )}
+                </motion.div>
+              )}
             </div>
 
             {/* Tabbed Product Details */}

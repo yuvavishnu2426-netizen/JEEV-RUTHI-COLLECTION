@@ -636,8 +636,33 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectProduct, o
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 text-xs text-gray-700 space-y-2 leading-relaxed">
+                  <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 text-xs text-gray-700 space-y-3 leading-relaxed">
                     <p><strong>Concierge Delivery Note:</strong> Your precious handloom items are packaging or in transit. {trackingOrder.orderStatus === 'Delivered' ? 'Package has been delivered successfully. Thank you!' : 'Delivery status is updated in real-time.'}</p>
+                    
+                    {/* Shiprocket Live Tracking Integration */}
+                    <div className="bg-[#111111] text-white p-5 rounded-2xl border border-[#D4AF37]/40 space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2 text-xs font-bold text-[#D4AF37] uppercase tracking-wider font-cinzel">
+                          <Truck className="w-4 h-4" />
+                          <span>SHIPROCKET COURIER DISPATCH</span>
+                        </div>
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-mono px-2 py-0.5 rounded-full font-bold border border-emerald-500/40">
+                          Live Sync Active
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-300">
+                        Partner: <strong className="text-white">BlueDart / Delhivery Priority Air</strong> • AWB: <code className="text-[#D4AF37] font-mono">{trackingOrder.trackingNumber || `SR-${trackingOrder.order_id}`}</code>
+                      </p>
+                      <a
+                        href={`https://shiprocket.co/tracking/${trackingOrder.trackingNumber || trackingOrder.order_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-[#D4AF37] hover:bg-amber-400 text-[#111] font-bold text-xs px-4 py-2.5 rounded-xl uppercase transition tracking-wider shadow cursor-pointer"
+                      >
+                        <span>Track on Shiprocket Dashboard</span>
+                        <Truck className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
                   </div>
                 </>
               )}

@@ -10,6 +10,7 @@ import { useStore } from '../../store/useStore';
 import { Address, PaymentMethodType } from '../../types';
 import { createOrder, updateOrderPaymentScreenshot } from '../../lib/orders';
 import { uploadPaymentScreenshot } from '../../lib/storage';
+import { createShiprocketOrder } from '../../lib/shiprocket';
 
 interface CheckoutPageProps {
   onNavigateHome: () => void;
@@ -201,6 +202,27 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       };
 
       const dbOrder = await createOrder(orderPayload);
+
+      // Trigger automatic Shiprocket Logistics Sync
+      createShiprocketOrder({
+        order_id: orderId,
+        order_date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        billing_customer_name: fullName,
+        billing_address: addressLine,
+        billing_city: city,
+        billing_pincode: pincode,
+        billing_state: state,
+        billing_email: email,
+        billing_phone: mobile,
+        payment_method: paymentMethod === 'COD' ? 'COD' : 'Prepaid',
+        sub_total: amountPayable,
+        order_items: cart.map(item => ({
+          name: item.product.name,
+          sku: item.product.sku || item.product.id,
+          units: item.quantity,
+          selling_price: item.product.offer_price,
+        }))
+      }).catch(srErr => console.warn('Shiprocket auto-sync info:', srErr));
 
       // If screenshot uploaded, attach URL to order
       if (screenshotUrl && dbOrder) {
